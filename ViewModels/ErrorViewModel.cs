@@ -1,4 +1,4 @@
-namespace PortfolioTracker.Models
+namespace PortfolioTracker.ViewModels
 {
     public class ErrorViewModel
     {

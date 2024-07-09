@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using PortfolioTracker.Models;
+using PortfolioTracker.ViewModels;
 using System.Diagnostics;
 
 namespace PortfolioTracker.Controllers
