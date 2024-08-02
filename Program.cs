@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using PortfolioTracker.Common.Enums;
 using PortfolioTracker.Data;
+using PortfolioTracker.Services;
+using PortfolioTracker.ViewModels;
 
 namespace PortfolioTracker
 {
@@ -10,6 +13,11 @@ namespace PortfolioTracker
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            Dictionary<Enum, string[]> platformKeyMap = new Dictionary<Enum, string[]>()
+            {
+                { Platform.Coinbase, new []{ nameof(PlatformApiKeyViewModel.ApiKey), nameof(PlatformApiKeyViewModel.ApiSecret), nameof(PlatformApiKeyViewModel.Passphrase) } },
+                { Platform.Kraken, new []{nameof(PlatformApiKeyViewModel.ApiKey), nameof(PlatformApiKeyViewModel.ApiSecret)} }
+            };
             var connectionString = builder.Configuration["PortfolioDatabase"] ?? throw new InvalidOperationException("Connection string 'PortfolioDatabase' not found.");
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
@@ -18,7 +26,13 @@ namespace PortfolioTracker
                .AddEntityFrameworkStores<ApplicationDbContext>();
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddSingleton<Dictionary<Enum, string[]>>(platformKeyMap);
+            builder.Services.AddHttpClient("Kraken", httpClient =>
+            {
+                httpClient.BaseAddress = new Uri("https://api.kraken.com/");
 
+                httpClient.DefaultRequestHeaders.Add("", "");
+            });
             builder.Services.Configure<IdentityOptions>(options =>
             {
                 options.Lockout.MaxFailedAccessAttempts = 3;
