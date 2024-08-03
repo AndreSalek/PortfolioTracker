@@ -1,22 +1,11 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
-body {
-  margin-bottom: 60px;
+﻿[data-bs-theme=dark] {
+  /* redefine theme colors for dark theme */
+  /* redefine theme color variables */
+  --bs-primary: #144B82;
+  --bs-secondary: #005FB8;
+  /* redefine theme color rgb vars (used for bg- colors) */
+  --bs-primary-rgb: 20, 75, 130;
+  --bs-secondary-rgb: 0, 95, 184;
+  --bs-body-color: #dee2e6;
+  --bs-body-bg: #010917;
 }
