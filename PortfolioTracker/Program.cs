@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PortfolioTracker.Common.Enums;
 using PortfolioTracker.Data;
+using PortfolioTracker.Models;
 using PortfolioTracker.Services;
-using PortfolioTracker.ViewModels;
 
 namespace PortfolioTracker
 {
@@ -15,15 +15,18 @@ namespace PortfolioTracker
 
             Dictionary<Enum, string[]> platformKeyMap = new Dictionary<Enum, string[]>()
             {
-                { Platform.Coinbase, new []{ nameof(PlatformApiKeyViewModel.ApiKey), nameof(PlatformApiKeyViewModel.ApiSecret), nameof(PlatformApiKeyViewModel.Passphrase) } },
-                { Platform.Kraken, new []{nameof(PlatformApiKeyViewModel.ApiKey), nameof(PlatformApiKeyViewModel.ApiSecret)} }
+                { Platform.Coinbase, new []{ nameof(PlatformKeyData.ApiSecret), nameof(PlatformKeyData.Passphrase) } },
+                { Platform.Kraken, new []{ nameof(PlatformKeyData.ApiSecret)} }
             };
             var connectionString = builder.Configuration["PortfolioDatabase"] ?? throw new InvalidOperationException("Connection string 'PortfolioDatabase' not found.");
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-               .AddEntityFrameworkStores<ApplicationDbContext>();
+            builder.Services.AddIdentity<User, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+               .AddEntityFrameworkStores<ApplicationDbContext>()
+               .AddDefaultUI()
+               .AddDefaultTokenProviders();
+
             // Add services to the container.
             builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
             builder.Services.AddSingleton<Dictionary<Enum, string[]>>(platformKeyMap);
@@ -46,17 +49,20 @@ namespace PortfolioTracker
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+
             }
-            app.UseDeveloperExceptionPage();
+            // Configure the HTTP request pipeline.
+            else 
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
 
             app.UseAuthorization();

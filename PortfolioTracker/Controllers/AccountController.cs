@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using PortfolioTracker.Data;
 using PortfolioTracker.ViewModels;
 using System.Net.Mail;
 using System.Runtime.CompilerServices;
@@ -9,16 +10,16 @@ namespace PortfolioTracker.Controllers
     public class AccountController : Controller
     {
 		//Manages IdentityUser authentication
-		private readonly SignInManager<IdentityUser> _signInManager;
+		private readonly SignInManager<User> _signInManager;
 		/*Manages communication with data access layer of Microsoft Identity tables
          https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity?view=aspnetcore-8.0&tabs=visual-studio
          */
-		private readonly UserManager<IdentityUser> _userManager;
+		private readonly UserManager<User> _userManager;
 		private readonly ILogger<AccountController> _logger;
 
 		public AccountController(
-			 UserManager<IdentityUser> userManager,
-			 SignInManager<IdentityUser> signInManager,
+			 UserManager<User> userManager,
+			 SignInManager<User> signInManager,
 			 ILogger<AccountController> logger)
 		{
 			_userManager = userManager;
@@ -49,7 +50,7 @@ namespace PortfolioTracker.Controllers
 			// Login attempt failed
 			if (ModelState == null || !ModelState.IsValid) return View(model);
 
-			IdentityUser? identity = await _userManager.FindByNameAsync(model.UserName);
+			var identity = await _userManager.FindByNameAsync(model.UserName);
 			Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: true);
 
 			if (identity == null)
@@ -113,16 +114,16 @@ namespace PortfolioTracker.Controllers
 		}
 
 
-		private IdentityUser CreateUser()
+		private User CreateUser()
 		{
 			try
 			{
-				return Activator.CreateInstance<IdentityUser>();
+				return Activator.CreateInstance<User>();
 			}
 			catch
 			{
-				throw new InvalidOperationException($"Can't create an instance of '{nameof(IdentityUser)}'. " +
-					$"Ensure that '{nameof(IdentityUser)}' is not an abstract class and has a parameterless constructor, or alternatively ");
+				throw new InvalidOperationException($"Can't create an instance of '{nameof(Data.User)}'. " +
+					$"Ensure that '{nameof(Data.User)}' is not an abstract class and has a parameterless constructor, or alternatively ");
 			}
 		}
 

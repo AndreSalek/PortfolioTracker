@@ -1,4 +1,4 @@
-using PortfolioTracker.Models;
+using PortfolioTracker.Common.Helpers;
 
 namespace PortfolioTrackerTests
 {

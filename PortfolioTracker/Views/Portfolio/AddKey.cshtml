@@ -1,0 +1,27 @@
+﻿@model PlatformKeyData
+@inject Dictionary<Enum, string[]> platformKeyMap;
+<div>
+    <form id="apiKeyForm">
+        <div class="form-floating mb-3">
+            <select id="supportedPlatformsSelect" asp-for="Platform">
+                @foreach (var platform in platformKeyMap.Keys)
+                {
+                    <option name="@platform">@platform</option>
+                }
+
+            </select>
+        </div>
+
+        <div id="apiFields">
+            <div id="ApiSecretField" class="form-floating mb-3">
+                <input asp-for="ApiSecret" class="form-control" autocomplete="off" aria-required="true" placeholder="ApiSecret" />
+                <label asp-for="ApiSecret" class="form-label">ApiSecret</label>
+            </div>
+            <div id="PassphraseField" class="form-floating mb-3">
+                <input asp-for="Passphrase" class="form-control" autocomplete="off" aria-required="true" placeholder="Passphrase" />
+                <label asp-for="Passphrase" class="form-label">Passphrase</label>
+            </div>
+        </div>
+        <button class="btn btn-primary w-100" type="submit" id="registerBtn">Add API Key</button>
+    </form>
+</div>
