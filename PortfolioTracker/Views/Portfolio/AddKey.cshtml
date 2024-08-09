@@ -1,7 +1,7 @@
-﻿@model PlatformKeyData
+﻿@model PlatformKeyDataViewModel
 @inject Dictionary<Enum, string[]> platformKeyMap;
 <div>
-    <form id="apiKeyForm">
+    <form id="apiKeyForm" asp-asp-controller="portfolio" asp-action="AddKey">
         <div class="form-floating mb-3">
             <select id="supportedPlatformsSelect" asp-for="Platform">
                 @foreach (var platform in platformKeyMap.Keys)
@@ -22,6 +22,6 @@
                 <label asp-for="Passphrase" class="form-label">Passphrase</label>
             </div>
         </div>
-        <button class="btn btn-primary w-100" type="submit" id="registerBtn">Add API Key</button>
+        <button class="btn btn-primary w-100" type="submit" id="AddKeyBtn">Add API Key</button>
     </form>
 </div>

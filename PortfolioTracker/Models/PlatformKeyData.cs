@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
-using PortfolioTracker.Common.Enums;
+﻿using PortfolioTracker.Common.Enums;
 using PortfolioTracker.Data;
-using System.ComponentModel.DataAnnotations;
 
 namespace PortfolioTracker.Models
 {

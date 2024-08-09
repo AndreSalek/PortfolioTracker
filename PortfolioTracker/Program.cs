@@ -1,9 +1,10 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PortfolioTracker.Common.Enums;
 using PortfolioTracker.Data;
 using PortfolioTracker.Models;
-using PortfolioTracker.Services;
+using PortfolioTracker.ViewModels;
 
 namespace PortfolioTracker
 {
@@ -18,6 +19,7 @@ namespace PortfolioTracker
                 { Platform.Coinbase, new []{ nameof(PlatformKeyData.ApiSecret), nameof(PlatformKeyData.Passphrase) } },
                 { Platform.Kraken, new []{ nameof(PlatformKeyData.ApiSecret)} }
             };
+           
             var connectionString = builder.Configuration["PortfolioDatabase"] ?? throw new InvalidOperationException("Connection string 'PortfolioDatabase' not found.");
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
@@ -30,6 +32,10 @@ namespace PortfolioTracker
             // Add services to the container.
             builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
             builder.Services.AddSingleton<Dictionary<Enum, string[]>>(platformKeyMap);
+            builder.Services.AddAutoMapper(mapperConfig =>
+            {
+                mapperConfig.CreateMap<PlatformKeyData, PlatformKeyDataViewModel>().ReverseMap();
+            });
             builder.Services.AddHttpClient("Kraken", httpClient =>
             {
                 httpClient.BaseAddress = new Uri("https://api.kraken.com/");
@@ -43,8 +49,8 @@ namespace PortfolioTracker
                 options.SignIn.RequireConfirmedPhoneNumber = false;
                 options.SignIn.RequireConfirmedEmail = false;
 
-				options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-				options.Password.RequiredLength = 10;
+                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                options.Password.RequiredLength = 10;
             });
 
             var app = builder.Build();
@@ -56,11 +62,11 @@ namespace PortfolioTracker
 
             }
             // Configure the HTTP request pipeline.
-            else 
+            else
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();

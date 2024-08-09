@@ -1,33 +1,39 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using PortfolioTracker.Common;
+using Microsoft.EntityFrameworkCore;
 using PortfolioTracker.Common.Enums;
 using PortfolioTracker.Data;
 using PortfolioTracker.Models;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
+using PortfolioTracker.ViewModels;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PortfolioTracker.Controllers
 {
     [Authorize]
-	public class PortfolioController : Controller
-	{
-		private ILogger<PortfolioController> _logger;
+    public class PortfolioController : Controller
+    {
+        private ILogger<PortfolioController> _logger;
         private Dictionary<Enum, string[]> _platformKeyMap { get; set; }
         private IHttpClientFactory _httpClientFactory;
         private UserManager<User> _userManager;
+        private ApplicationDbContext _dbContext;
+        private IMapper _mapper;
         public PortfolioController(IHttpClientFactory httpClientFactory,
                                 Dictionary<Enum, string[]> platformKeyMap,
-                                ILogger<PortfolioController> logger,
-                                UserManager<User> userManager)
-		{
-			_httpClientFactory = httpClientFactory;
-			_platformKeyMap = platformKeyMap;
+                                UserManager<User> userManager,
+                                ApplicationDbContext dbContext,
+                                IMapper mapper,
+                                ILogger<PortfolioController> logger)
+        {
+            _httpClientFactory = httpClientFactory;
+            _platformKeyMap = platformKeyMap;
             _userManager = userManager;
-			_logger = logger;
-		}
+            _dbContext = dbContext;
+            _mapper = mapper;
+            _logger = logger;
+        }
 
         #region GET METHODS
         public IActionResult Index()
@@ -39,10 +45,10 @@ namespace PortfolioTracker.Controllers
         {
             ViewData["Title"] = "Key Management";
             var user = await _userManager.GetUserAsync(User);
+            ICollection<PlatformKeyData> keyList = user.ApiKeyList;
+            ICollection<PlatformKeyDataViewModel> viewData = _mapper.Map<PlatformKeyDataViewModel[]>(keyList);
 
-
-
-            return View(new List<PlatformKeyData>());
+            return View(viewData);
         }
 
         public IActionResult PlatformRequiredFields(string platform)
@@ -54,33 +60,41 @@ namespace PortfolioTracker.Controllers
             return NotFound(platform);
         }
 
-		public IActionResult AddKey()
-		{
+        public IActionResult AddKey()
+        {
             ViewData["Title"] = "Key Management - Add Key";
-            return View(new PlatformKeyData());
-		}
+            return View(new PlatformKeyDataViewModel());
+        }
         #endregion
 
 
         #region POST METHODS
         [HttpPost]
-        public IActionResult ApiKeyManagement(PlatformKeyData keyData)
+        public async Task<IActionResult> AddKey(PlatformKeyDataViewModel viewmodel)
         {
-            return View();
+            if (!ModelState.IsValid) return View(viewmodel);
+            var data = _mapper.Map<PlatformKeyData>(viewmodel);
+            data.Id = Guid.NewGuid().ToString();
+            data.UserId = _userManager.GetUserId(User) ?? throw new KeyNotFoundException("Missing user ID claim.");
+            await _dbContext.ApiKeyData.AddAsync(data);
+            await _dbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(ApiKeyManagement));
         }
         [HttpPost]
-        public IActionResult AddKey(PlatformKeyData keyData)
+        public async Task<IActionResult> RemoveKey(string id)
         {
-            return View(keyData);
-        }
-        [HttpPost]
-        public IActionResult RemoveKey(int id)
-        {
+            if (id == null) NotFound("Invalid key ID");
+            string userId = _userManager.GetUserId(User) ?? throw new KeyNotFoundException("Missing user ID claim.");
+            var keyData = await _dbContext.ApiKeyData.SingleAsync(data => (data.UserId == userId) && (data.Id == id));
+
+            if (keyData == null) return NotFound(id);
+            _dbContext.ApiKeyData.Remove(keyData);
+            await _dbContext.SaveChangesAsync(true);
             return View(nameof(ApiKeyManagement));
         }
         #endregion
 
-      
-	}
-	
+
+    }
+
 }

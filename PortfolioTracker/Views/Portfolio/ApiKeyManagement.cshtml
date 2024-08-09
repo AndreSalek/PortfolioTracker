@@ -1,11 +1,11 @@
-﻿@model List<PlatformKeyData>
+﻿@model ICollection<PlatformKeyDataViewModel>
 
 <table class="table table-borderless table-wrapper text-center">
-    <button asp-controller="Portfolio" asp-action="AddKey">Add key</button>
+    <a class="btn btn-primary" href="/portfolio/AddKey">Add key</a>
     <thead>
         <tr>
-            <th class="table-header">@nameof(PlatformKeyData.Platform)</th>
-            <th class="min-vw-75">@nameof(PlatformKeyData.ApiSecret)</th>
+            <th class="table-header">@nameof(PlatformKeyDataViewModel.Platform)</th>
+            <th class="min-vw-75">@nameof(PlatformKeyDataViewModel.ApiSecret)</th>
             <th class="table-header">Delete Key</th>
 
         </tr>
@@ -17,9 +17,7 @@
                 <td>@key.Platform</td>
                 <td>@key.ApiSecret</td>
                 <td>
-                    <a asp-controller="Client" asp-action="Delete" asp-route-id="@key.Id">
-                        <img src="/Icons/delete.png" class="img-link" />
-                    </a>
+                    @* <button type="" asp-controller="portfolio" asp-action="RemoveKey" asp-route-id="@key.Id" class="btn btn-secondary">Remove Key</button> *@
                 </td>
             </tr>
         }

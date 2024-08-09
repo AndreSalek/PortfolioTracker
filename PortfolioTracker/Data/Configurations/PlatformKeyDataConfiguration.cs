@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PortfolioTracker.Models;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PortfolioTracker.Data.Configurations
 {
