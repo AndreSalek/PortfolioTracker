@@ -10,16 +10,23 @@
 
         </tr>
     </thead>
-    <tbody class="accordion">
-        @foreach (var key in Model)
-        {
-            <tr>
-                <td>@key.Platform</td>
-                <td>@key.ApiSecret</td>
-                <td>
-                    @* <button type="" asp-controller="portfolio" asp-action="RemoveKey" asp-route-id="@key.Id" class="btn btn-secondary">Remove Key</button> *@
-                </td>
-            </tr>
-        }
+    <tbody class="">
+            @foreach (var key in Model)
+            {
+            @* Propably change this later to use javascript and have one form only instead of form for each row *@
+            <form method="post" asp-controller="Portfolio" asp-action="RemoveKey">
+                <tr>
+                    <td>
+                        <input type="hidden" name="@nameof(PlatformKeyDataViewModel.Id)" value="@key.Id" />
+                    </td>
+                    <td>@key.Platform</td>
+                    <td>@key.ApiSecret</td>
+                    <td>
+                    <button type="submit" class="btn btn-secondary">Remove</button>
+                    </td>
+                </tr>
+            </form>
+            }
+        
     </tbody>
 </table>

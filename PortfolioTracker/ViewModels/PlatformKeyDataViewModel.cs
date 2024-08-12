@@ -10,7 +10,7 @@ namespace PortfolioTracker.ViewModels
     {
         public Guid Id { get; set; }
         [TypeConverter(typeof(StringToEnumConverter<Platform>))]
-        [Required]
+        [Required]                                                                                                  
         public string Platform { get; set; }
         [Required]
         [Display(Name = "API-Secret")]

@@ -83,14 +83,14 @@ namespace PortfolioTracker.Controllers
         [HttpPost]
         public async Task<IActionResult> RemoveKey(string id)
         {
-            if (id == null) NotFound("Invalid key ID");
+            if (id == null) return NotFound("Invalid key ID");
             string userId = _userManager.GetUserId(User) ?? throw new KeyNotFoundException("Missing user ID claim.");
-            var keyData = await _dbContext.ApiKeyData.SingleAsync(data => (data.UserId == userId) && (data.Id == id));
+            var keyData = await _dbContext.ApiKeyData.SingleOrDefaultAsync(data => (data.UserId == userId) && (data.Id == id));
 
             if (keyData == null) return NotFound(id);
             _dbContext.ApiKeyData.Remove(keyData);
             await _dbContext.SaveChangesAsync(true);
-            return View(nameof(ApiKeyManagement));
+            return RedirectToAction(nameof(ApiKeyManagement));
         }
         #endregion
 
