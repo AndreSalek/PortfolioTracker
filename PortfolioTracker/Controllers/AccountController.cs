@@ -27,23 +27,25 @@ namespace PortfolioTracker.Controllers
         #region GET_Methods
         public IActionResult Login()
         {
-            if (_signInManager.IsSignedIn(User)) return RedirectToAction("Index", "Client");
+            ViewData["Title"] = "Log in";
+            if (_signInManager.IsSignedIn(User)) return RedirectToAction("Index", "Portfolio");
             return View(new LoginViewModel());
         }
         public IActionResult Register()
         {
-            if (_signInManager.IsSignedIn(User)) return RedirectToAction("Index", "Client");
+            ViewData["Title"] = "Register";
+            if (_signInManager.IsSignedIn(User)) return RedirectToAction("Index", "Portfolio");
             return View(new RegisterViewModel());
         }
         public IActionResult Lockout() => View();
         #endregion
 
 
-        // POST METHODS
+        #region POST_Methods
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = default)
         {
-            returnUrl ??= Url.Content("/Portfolio/Index");
+            returnUrl ??= Url.Content("/Home/Index");
 
             // Login attempt failed
             if (ModelState == null || !ModelState.IsValid) return View(model);
@@ -78,7 +80,7 @@ namespace PortfolioTracker.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model, string? returnUrl = default)
         {
-            returnUrl ??= Url.Content("/Account/Login");
+            returnUrl ??= Url.Content("/Home/Index");
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
@@ -110,6 +112,8 @@ namespace PortfolioTracker.Controllers
             returnUrl ??= Url.Content("/Account/Login");
             return LocalRedirect(returnUrl);
         }
+        #endregion
+
 
 
         private User CreateUser()
