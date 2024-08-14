@@ -1,15 +1,18 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using PortfolioTracker.Common.Interfaces;
 using PortfolioTracker.Data.Configurations;
-using PortfolioTracker.Models;
 
 namespace PortfolioTracker.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
     {
         public DbSet<PlatformKeyData> ApiKeyData { get; set; }
-        public DbSet<User> Users { get; set; }
+        // Hiding IdentityDbContext's User for custom implementation
+        public new DbSet<User> Users { get; set; }
+        public DbSet<ErrorLog> ErrorLog { get; set; }
+
         public ApplicationDbContext(DbContextOptions options) : base(options) { }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -31,6 +34,7 @@ namespace PortfolioTracker.Data
 
             builder.ApplyConfiguration(new PlatformKeyDataConfiguration());
             builder.ApplyConfiguration(new ApplicationUserConfiguration());
+            builder.ApplyConfiguration(new ErrorLogConfiguration());
         }
 
     }

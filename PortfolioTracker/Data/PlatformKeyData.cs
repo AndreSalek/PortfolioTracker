@@ -1,7 +1,6 @@
 ﻿using PortfolioTracker.Common.Enums;
-using PortfolioTracker.Data;
 
-namespace PortfolioTracker.Models
+namespace PortfolioTracker.Data
 {
     public class PlatformKeyData
     {

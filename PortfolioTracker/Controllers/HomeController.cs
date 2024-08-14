@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using PortfolioTracker.Common.Logging;
 using PortfolioTracker.ViewModels;
 using System.Diagnostics;
 
@@ -28,6 +29,5 @@ namespace PortfolioTracker.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-
     }
 }

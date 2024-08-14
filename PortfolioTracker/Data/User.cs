@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using PortfolioTracker.Models;
 
 namespace PortfolioTracker.Data
 {

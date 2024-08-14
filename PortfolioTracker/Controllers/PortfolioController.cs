@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PortfolioTracker.Common.Enums;
+using PortfolioTracker.Common.Interfaces;
 using PortfolioTracker.Data;
-using PortfolioTracker.Models;
 using PortfolioTracker.ViewModels;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -18,12 +18,12 @@ namespace PortfolioTracker.Controllers
         private Dictionary<Enum, string[]> _platformKeyMap { get; set; }
         private IHttpClientFactory _httpClientFactory;
         private UserManager<User> _userManager;
-        private ApplicationDbContext _dbContext;
+        private IApplicationDbContext _dbContext;
         private IMapper _mapper;
         public PortfolioController(IHttpClientFactory httpClientFactory,
                                 Dictionary<Enum, string[]> platformKeyMap,
                                 UserManager<User> userManager,
-                                ApplicationDbContext dbContext,
+                                IApplicationDbContext dbContext,
                                 IMapper mapper,
                                 ILogger<PortfolioController> logger)
         {
@@ -89,7 +89,7 @@ namespace PortfolioTracker.Controllers
 
             if (keyData == null) return NotFound(id);
             _dbContext.ApiKeyData.Remove(keyData);
-            await _dbContext.SaveChangesAsync(true);
+            await _dbContext.SaveChangesAsync();
             return RedirectToAction(nameof(ApiKeyManagement));
         }
         #endregion
