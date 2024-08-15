@@ -15,7 +15,13 @@ namespace PortfolioTracker
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            var connectionString = builder.Configuration.GetSection("PortfolioDatabase").Value ?? throw new InvalidOperationException("Connection string 'PortfolioDatabase' not found.");
+            string connectionString;
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
+            {
+                connectionString = Environment.GetEnvironmentVariable("PortfolioDatabase") ?? throw new InvalidOperationException("Environment variable does not exist.");
+            }
+            else connectionString = builder.Configuration.GetSection("PortfolioDatabase").Value ?? throw new InvalidOperationException("Connection string 'PortfolioDatabase' not found.");
+
             Dictionary<Enum, string[]> platformKeyMap = new Dictionary<Enum, string[]>()
             {
                 { Platform.Coinbase, new []{ nameof(PlatformKeyData.ApiSecret), nameof(PlatformKeyData.Passphrase) } },
